@@ -32,15 +32,19 @@ module and_gate(
     output logic [15:0] led
     );
     logic [3:0] index = 4'd0;
+    logic btnL_d;
+    logic btnR_d;
     always_ff @(posedge clk) begin
-        if(btnL) begin
+        btnL_d <= btnL;
+        btnR_d <= btnR;
+        if(btnL & ~btnL_d) begin
             if (index < 15) begin
                 index <= index+1;
             end else begin
                 index = 0;
             end
         end 
-        else if (btnR) begin
+        else if (btnR & ~btnR_d) begin
             if (index > 0) begin
                 index <= index-1;
             end else begin
