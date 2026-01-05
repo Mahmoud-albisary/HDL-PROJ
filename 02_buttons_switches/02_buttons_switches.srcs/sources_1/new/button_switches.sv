@@ -41,7 +41,7 @@ module debounce( //The debounce module to solve the bouncing problem for mechani
 
 endmodule
 
-module and_gate(
+module button_switches(
     input logic clk,
     input logic btnU,
     input logic btnD,
