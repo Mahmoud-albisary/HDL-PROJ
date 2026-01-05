@@ -18,12 +18,12 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-module debounce(
+module debounce( //The debounce module to solve the bouncing problem for mechanincal buttons
     input logic clk,
     input logic btn,
     output logic clean
     );
-    localparam int COUNT_MAX = 1000000;
+    localparam int COUNT_MAX = 1000000; //Clock frequency is 100 MHz, so 1,000,000 counts will be 10ms to check that the calue is unchanged
     logic [$clog2(COUNT_MAX+1)-1: 0] count;
     always_ff @(posedge clk) begin
 
@@ -91,7 +91,7 @@ module and_gate(
     always_ff @(posedge clk) begin
         btnL_d <= btnL_c;
         btnR_d <= btnR_c;
-        if(btnL_c & ~btnL_d) begin
+        if(btnL_c & ~btnL_d) begin  // The delayed level of the button to make the button works only on positive edge rather than checking the level alone.
             if (index < 15) begin
                 index <= index+1;
             end else begin
