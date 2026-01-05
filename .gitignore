@@ -1,0 +1,109 @@
+# =========================================================
+# Vivado / Xilinx FPGA projects (.xpr) - Basys3 friendly
+# Keep sources (.v/.sv/.vhd), constraints (.xdc), scripts (.tcl)
+# Ignore generated build products, caches, runs, logs, temp
+# =========================================================
+
+# --- OS / editor junk ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.bak
+*.orig
+*.~*
+
+# VS Code / JetBrains (optional)
+.vscode/
+.idea/
+
+# --- Vivado project user/state files ---
+*.jou
+*.log
+*.str
+*.xpr.user
+*.xml
+*.html
+*.json
+*.wpc
+*.wdf
+*.rst
+*.lpr
+*.vdi
+*.xpr
+
+# --- Vivado generated directories (common) ---
+*.ip_user_files/
+*.cache/
+*.hw/
+*.runs/
+*.sim/
+*.srcs/*/ip/*/.Xil/          # IP temp
+*.Xil/                       # global Xilinx temp
+
+# Reports / messages / misc outputs
+*.rpt
+*.wdb
+*.wcfg
+*.pb
+*.dmp
+*.txt
+
+# Simulation artifacts (various)
+xsim.dir/
+*.vcd
+*.fst
+*.lxt
+*.ghw
+
+# --- IP / HLS / SDK style outputs (ignore if present) ---
+*.sdk/
+*.hdf
+*.sysdef
+*.bit
+*.bin
+*.ltx
+
+
+# --- Exported hardware / device images (optional) ---
+# If you want to keep released bitstreams, comment these out.
+*.mcs
+*.prm
+*.rpx
+
+# --- Generated sources / synthesis byproducts (often huge) ---
+*.edf
+*.edif
+*.ngc
+*.ngd
+*.ncd
+*.dcp
+*.xdc~                      # backup constraints
+*.zip
+*.tar
+*.tar.gz
+
+*.log
+*.jou
+*.js
+*.bat 
+*.sh
+
+
+# --- If you use "Create HDL Wrapper" and it generates under project ---
+# (Usually safe to keep wrappers tracked if you prefer; otherwise ignore)
+# **/*_wrapper.v
+# **/*_wrapper.vhd
+
+# --- Keep important files explicitly (usually not necessary, but safe) ---
+!.gitignore
+!**/*.v
+!**/*.sv
+!**/*.vh
+!**/*.vhd
+!**/*.vhdl
+!**/*.xdc
+!**/*.tcl
+!**/*.md
+*__synthesis_is_complete__
