@@ -73,8 +73,10 @@ module blink_display(
 endmodule
 
 module segment_display(
-    output logic [3:0] an ,
-    output logic [6:0] c ,
+    input logic clk,
+    input logic rst,
+    output logic [3:0] an,
+    output logic [6:0] c,
     output logic dp
     );
     always_comb begin
