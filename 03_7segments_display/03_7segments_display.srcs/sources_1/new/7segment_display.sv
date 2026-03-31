@@ -34,10 +34,8 @@
 //    end
 //endmodule
 
-module num_to_display(
-    input logic num[3:0];
-    output logic display[6:0];
-)
+function automatic logic [6:0] num_to_display(input logic [3:0] num);
+    begin
     case(num)
         4'd0: display = 7'b1000000;  
         4'd1: display = 7'b1111001;  
