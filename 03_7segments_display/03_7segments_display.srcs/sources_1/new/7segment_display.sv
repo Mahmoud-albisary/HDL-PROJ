@@ -36,7 +36,7 @@
 
 function automatic logic [6:0] num_to_display(input logic [3:0] num);
     begin
-    case(num)
+        case(num)
             4'd0: num_to_display = 7'b1000000;
             4'd1: num_to_display = 7'b1111001;
             4'd2: num_to_display = 7'b0100100;
@@ -79,10 +79,16 @@ module segment_display(
     output logic [6:0] c,
     output logic dp
     );
-    always_comb begin
-        an = 4'b0000;     // enable all displays
-        c  = 7'b1000000;  // pattern for "0" for all displays
-        dp = 1'b0;        // decimal point ON
-
-    end
+    logic blink = 1'b1;
+    logic initial_value = 4'd0;
+    blink_display(.clk (clk), .rst (rst), .blink (blink));
+    assign an = {2'b00, blink, blink};     
+    assign c = num_to_display(initial_value);
+    assign dp = 1'b1;        // decimal point OFF
+    
+//    always_comb begin
+//        an = 4'b0000;     // enable all displays
+//        c  = 7'b1000000;  // pattern for "0" for all displays
+//        dp = 1'b0;        // decimal point ON
+//    end
 endmodule
