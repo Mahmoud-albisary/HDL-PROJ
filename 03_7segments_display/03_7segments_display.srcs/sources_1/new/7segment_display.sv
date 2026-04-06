@@ -72,6 +72,22 @@ module blink_display(
     end
 endmodule
 
+module toggle(
+    input logic clk,
+    input logic rst,
+    output logic [1:0] activate
+);
+    logic [15:0] refresh_count;
+    always_ff @(posedge clk or posedge rst) begin
+        if(rst) begin
+            refresh_count <= 0;
+        end else begin
+            refresh_count <= refresh_count + 1;
+        end
+    end
+    assign activate = refresh_count[15:14];
+endmodule
+
 module segment_display(
     input logic clk,
     input logic rst,
