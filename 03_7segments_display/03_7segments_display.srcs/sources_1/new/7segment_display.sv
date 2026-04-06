@@ -104,8 +104,7 @@ module segment_display(
     logic edit_left_pair = 0;
     logic initial_value = 4'd0;
     blink_display(.clk (clk), .rst (rst), .blink (blink));
-//    assign an = {2'b00, blink, blink};     
-//    assign c = num_to_display(initial_value);
+
     assign dp = 1'b1;        // decimal point OFF
     toggle(.clk (clk), .rst (rst), .activate (activate));
     always_comb begin
@@ -134,8 +133,7 @@ module segment_display(
     logic btnL_prev;
 
     always_ff @(posedge rst or posedge clk) begin
-        if(rst) begin
-//           an <= {2'b00, blink, blink};   
+        if(rst) begin 
             edit_left_pair <= 0;  
             c <= num_to_display(initial_value);
         end else begin
