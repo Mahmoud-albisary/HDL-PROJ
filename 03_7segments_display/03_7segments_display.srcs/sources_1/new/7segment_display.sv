@@ -100,15 +100,57 @@ module segment_display(
     output logic dp
     );
     logic blink = 1'b1;
+    logic [1:0] activate = 2'b00;
+    logic edit_left_pair = 0;
     logic initial_value = 4'd0;
     blink_display(.clk (clk), .rst (rst), .blink (blink));
-    assign an = {2'b00, blink, blink};     
-    assign c = num_to_display(initial_value);
+//    assign an = {2'b00, blink, blink};     
+//    assign c = num_to_display(initial_value);
     assign dp = 1'b1;        // decimal point OFF
-    
-//    always_comb begin
-//        an = 4'b0000;     // enable all displays
-//        c  = 7'b1000000;  // pattern for "0" for all displays
-//        dp = 1'b0;        // decimal point ON
-//    end
+    toggle(.clk (clk), .rst (rst), .activate (activate));
+    always_comb begin
+        case (activate)
+            2'b00: begin
+                an = (!edit_left_pair && !blink) ? 4'b1111 : 4'b1110;
+            end
+
+            2'b01: begin
+                an = (!edit_left_pair && !blink) ? 4'b1111 : 4'b1101;
+            end
+
+            2'b10: begin
+                an = (edit_left_pair && !blink) ? 4'b1111 : 4'b0011;
+            end
+
+            2'b11: begin
+                an = (edit_left_pair && !blink) ? 4'b1111 : 4'b0011;
+            end
+        endcase
+    end
+
+    logic btnU_prev;
+    logic btnD_prev;
+    logic btnR_prev;
+    logic btnL_prev;
+
+    always_ff @(posedge rst or posedge clk) begin
+        if(rst) begin
+//           an <= {2'b00, blink, blink};   
+            edit_left_pair <= 0;  
+            c <= num_to_display(initial_value);
+        end else begin
+                btnU_prev <= btnU;
+                btnD_prev <= btnD;
+                btnR_prev <= btnR;
+                btnL_prev <= btnL;
+                if(btnL && !btnL_prev) begin
+                    edit_left_pair <= 1;
+                    c <= num_to_display(initial_value);
+                end 
+                else if(btnR && !btnR_prev) begin
+                    edit_left_pair <= 0;    
+                    c <= num_to_display(initial_value); 
+                end
+            end
+        end
 endmodule
