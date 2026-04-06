@@ -75,6 +75,10 @@ endmodule
 module segment_display(
     input logic clk,
     input logic rst,
+    input logic btnU,
+    input logic btnD,
+    input logic btnR,
+    input logic btnL,
     output logic [3:0] an,
     output logic [6:0] c,
     output logic dp
