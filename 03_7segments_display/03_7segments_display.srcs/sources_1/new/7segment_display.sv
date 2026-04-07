@@ -103,30 +103,46 @@ module segment_display(
     logic [1:0] activate = 2'b00;
     logic edit_left_pair = 0;
     logic initial_value = 4'd0;
+    logic [5:0] right_value;
+    logic [4:0] left_value;
+    logic [3:0] digits [3:0];
     blink_display(.clk (clk), .rst (rst), .blink (blink));
 
     assign dp = 1'b1;        // decimal point OFF
     toggle(.clk (clk), .rst (rst), .activate (activate));
     always_comb begin
+        digits[0] = right_value % 10;
+        digits[1] = right_value / 10;
+        digits[2] = left_value % 10;
+        digits[3] = left_value / 10;
+        
         case (activate)
             2'b00: begin
+                c = num_to_display(digits[0]); 
                 an = (!edit_left_pair && !blink) ? 4'b1111 : 4'b1110;
             end
 
             2'b01: begin
+                c = num_to_display(digits[1]); 
                 an = (!edit_left_pair && !blink) ? 4'b1111 : 4'b1101;
             end
 
             2'b10: begin
-                an = (edit_left_pair && !blink) ? 4'b1111 : 4'b0011;
+                 c = num_to_display(digits[2]);
+                an = (edit_left_pair && !blink) ? 4'b1111 : 4'b1011;
             end
 
             2'b11: begin
-                an = (edit_left_pair && !blink) ? 4'b1111 : 4'b0011;
+                 c = num_to_display(digits[3]);
+                an = (edit_left_pair && !blink) ? 4'b1111 : 4'b0111;
             end
         endcase
     end
-
+    logic btnU_c;
+    logic btnD_c;
+    
+    debounce db1(.clk (clk), .btn (btnU), .clean (btnU_c));
+    debounce db2(.clk (clk), .btn (btnD), .clean (btnD_c));
     logic btnU_prev;
     logic btnD_prev;
     logic btnR_prev;
@@ -135,19 +151,54 @@ module segment_display(
     always_ff @(posedge rst or posedge clk) begin
         if(rst) begin 
             edit_left_pair <= 0;  
-            c <= num_to_display(initial_value);
         end else begin
-                btnU_prev <= btnU;
-                btnD_prev <= btnD;
+                btnU_prev <= btnU_c;
+                btnD_prev <= btnD_c;
                 btnR_prev <= btnR;
                 btnL_prev <= btnL;
                 if(btnL && !btnL_prev) begin
                     edit_left_pair <= 1;
-                    c <= num_to_display(initial_value);
+                    //c <= num_to_display(initial_value);
                 end 
                 else if(btnR && !btnR_prev) begin
                     edit_left_pair <= 0;    
-                    c <= num_to_display(initial_value); 
+                    //c <= num_to_display(initial_value); 
+                end
+                else if (btnD_c && !btnD_prev) begin
+                    if (edit_left_pair) begin
+                        if(left_value > 0) begin
+                            left_value <= left_value - 1;
+                        end
+                        else begin
+                            left_value <= 23;
+                        end
+                    end
+                    else begin
+                        if(right_value > 0) begin
+                            right_value <= right_value - 1;
+                        end
+                        else begin
+                            right_value <= 59;
+                        end
+                    end
+                end
+                else if (btnU_c && !btnU_prev) begin
+                     if (edit_left_pair) begin
+                        if(left_value < 23) begin
+                            left_value <= left_value + 1;
+                        end
+                        else begin
+                            left_value <= 0;
+                        end
+                    end
+                    else begin
+                        if(right_value < 59) begin
+                            right_value <= right_value + 1;
+                        end
+                        else begin
+                            right_value <= 0;
+                        end
+                    end
                 end
             end
         end
