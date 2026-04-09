@@ -45,6 +45,7 @@ module clock(
     logic [5:0] right_value;
     logic [4:0] left_value;
     logic [3:0] digits [3:0];
+    logic [32:0] timing_count = 33'd6000000000; // 6 billion counts for 1 minute at 100 MHz
     blink_display(.clk (clk), .rst (rst), .blink (blink));
     toggle t1(.clk (clk), .rst (rst), .activate (activate));
     state_t state;
@@ -122,6 +123,18 @@ module clock(
                     DISPLAY: begin
                         if(btnL_c && !btnL_prev) begin
                             state <= SET_MINUTES;
+                        end
+                        if (timing_count == 0) begin
+                            timing_count <= 33'd6000000000; // reset the count for the next minute
+                            if(right_value == 6'd59) begin
+                                right_value <= 0;
+                                if(left_value == 5'd23) left_value <= 0;
+                                else left_value <= left_value + 1;
+                            end else begin
+                                right_value <= right_value + 1;
+                            end
+                        end else begin
+                            timing_count <= timing_count - 1;
                         end
                     end
                 endcase
