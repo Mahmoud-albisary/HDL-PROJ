@@ -93,6 +93,7 @@ module clock(
                 btnL_prev <= btnL_c;
 
                 // ****** Next State Logic and Data Updates ******
+                // Note that we combined the next state logic and the data updates in one always_ff block for simplicity, but they can be separated if desired.
                 case (state) 
                     SET_MINUTES: begin
                         if(btnU_c && !btnU_prev) begin
