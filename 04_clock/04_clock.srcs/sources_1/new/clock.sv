@@ -48,10 +48,12 @@ module clock(
     logic [32:0] timing_count = 33'd6000000000; // 6 billion counts for 1 minute at 100 MHz
     blink_display(.clk (clk), .rst (rst), .blink (blink));
     toggle t1(.clk (clk), .rst (rst), .activate (activate));
-    state_t state;
+    state_t state = SET_MINUTES;
 
 // ****** State Register ********
     always_comb begin
+        show_min = 1'b1;
+        show_hours = 1'b1;
         case (state)
             SET_MINUTES: begin
                 show_min = blink;
