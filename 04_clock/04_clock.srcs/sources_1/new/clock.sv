@@ -19,6 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 import seven_seg_pkg::*;
+import state_types_pkg::*;
 
 module clock(
     input logic clk,
@@ -32,23 +33,25 @@ module clock(
     output logic dp
     );
 
-    typedef enum logic [1:0] {
-        SET_MINUTES,
-        SET_HOURS,
-        DISPLAY
-    } state_t;
-
+    logic btnU_c, btnD_c, btnR_c, btnL_c;
     logic show_min = 1'b1;
     logic show_hours = 1'b1;
     logic blink = 1'b1;
     logic [1:0] activate = 2'b00;
     logic [5:0] right_value;
     logic [4:0] left_value;
-    logic [3:0] digits [3:0];
-    logic [32:0] timing_count = 33'd6000000000; // 6 billion counts for 1 minute at 100 MHz
+    logic [5:0] tc_right_value;
+    logic [4:0] tc_left_value;
+
     blink_display(.clk (clk), .rst (rst), .blink (blink));
     toggle t1(.clk (clk), .rst (rst), .activate (activate));
     state_t state = SET_MINUTES;
+    assign dp = 1'b1; // decimal point off
+
+    debounce db1(.clk (clk), .btn (btnU), .clean (btnU_c));
+    debounce db2(.clk (clk), .btn (btnD), .clean (btnD_c));
+    debounce db3(.clk (clk), .btn (btnL), .clean (btnL_c));
+    debounce db4(.clk (clk), .btn (btnR), .clean (btnR_c));
 
 // ****** State Register ********
     always_comb begin
@@ -72,106 +75,38 @@ module clock(
         endcase
     end
 // *******************************
-   
-    debounce db1(.clk (clk), .btn (btnU), .clean (btnU_c));
-    debounce db2(.clk (clk), .btn (btnD), .clean (btnD_c));
-    debounce db3(.clk (clk), .btn (btnL), .clean (btnL_c));
-    debounce db4(.clk (clk), .btn (btnR), .clean (btnR_c));
+    update_state_data up(
+        .clk (clk),
+        .rst (rst),
+        .btnU_c (btnU_c),
+        .btnD_c (btnD_c),
+        .btnL_c (btnL_c),
+        .btnR_c (btnR_c),
+        .tc_right_value (tc_right_value),
+        .tc_left_value (tc_left_value),
+        .state (state),
+        .right_value (right_value),
+        .left_value (left_value)
+    );
 
-    logic btnU_prev;
-    logic btnD_prev;
-    logic btnR_prev;
-    logic btnL_prev;
+    time_counter tc(
+        .clk (clk),
+        .rst (rst),
+        .right_value (right_value),
+        .left_value (left_value),
+        .enable_counter (state == DISPLAY),
+        .right_value_out (tc_right_value),
+        .left_value_out (tc_left_value)
+    );
 
-    always_ff @(posedge rst or posedge clk) begin
-        if(rst) begin 
-            state <= SET_MINUTES;
-            left_value <= 0;
-            right_value <= 0;
-        end else begin
-                btnU_prev <= btnU_c;
-                btnD_prev <= btnD_c;
-                btnR_prev <= btnR_c;
-                btnL_prev <= btnL_c;
+    display_mux dm(
+        .right_value (right_value),
+        .left_value (left_value),
+        .show_min (show_min),
+        .show_hours (show_hours),
+        .activate (activate),
+        .an (an),
+        .c (c)
+    );
 
-                // ****** Next State Logic and Data Updates ******
-                // Note that we combined the next state logic and the data updates in one always_ff block for simplicity, but they can be separated if desired.
-                case (state) 
-                    SET_MINUTES: begin
-                        if(btnU_c && !btnU_prev) begin
-                            if(right_value == 6'd59) right_value <= 0;
-                            else right_value <= right_value + 1;
-                        end else if(btnD_c && !btnD_prev) begin
-                            if(right_value == 0) right_value <= 6'd59;
-                            else right_value <= right_value - 1;
-                        end else if(btnL_c && !btnL_prev) begin
-                            state <= SET_HOURS;
-                        end
-                    end
-
-                    SET_HOURS: begin
-                        if(btnU_c && !btnU_prev) begin
-                            if(left_value == 5'd23) left_value <= 0;
-                            else left_value <= left_value + 1;
-                        end else if(btnD_c && !btnD_prev) begin
-                            if(left_value == 0) left_value <= 5'd23;
-                            else left_value <= left_value - 1;
-                        end else if(btnL_c && !btnL_prev) begin
-                            state <= DISPLAY;
-                        end else if(btnR_c && !btnR_prev) begin
-                            state <= SET_MINUTES;
-                        end
-                    end
-
-                    DISPLAY: begin
-                        if(btnL_c && !btnL_prev) begin
-                            state <= SET_MINUTES;
-                        end
-                        if (timing_count == 0) begin
-                            timing_count <= 33'd6000000000; // reset the count for the next minute
-                            if(right_value == 6'd59) begin
-                                right_value <= 0;
-                                if(left_value == 5'd23) left_value <= 0;
-                                else left_value <= left_value + 1;
-                            end else begin
-                                right_value <= right_value + 1;
-                            end
-                        end else begin
-                            timing_count <= timing_count - 1;
-                        end
-                    end
-                endcase
-                // ***********************************************
-            end
-    end
-    // ****** Combinational Logic for 7-Segment Display *******
-    always_comb begin
-        digits[0] = right_value % 10;
-        digits[1] = right_value / 10;
-        digits[2] = left_value % 10;
-        digits[3] = left_value / 10;
-        
-        case (activate)
-            2'b00: begin
-                c = num_to_display(digits[0]); 
-                an = (show_min) ? 4'b1110 : 4'b1111;
-            end
-
-            2'b01: begin
-                c = num_to_display(digits[1]); 
-                an = (show_min) ? 4'b1101 : 4'b1111;
-            end
-
-            2'b10: begin
-                 c = num_to_display(digits[2]);
-                an = (show_hours) ? 4'b1011 : 4'b1111;
-            end
-
-            2'b11: begin
-                 c = num_to_display(digits[3]);
-                an = (show_hours) ? 4'b0111 : 4'b1111;
-            end
-        endcase
-    end
-    // *******************************************************
 endmodule
