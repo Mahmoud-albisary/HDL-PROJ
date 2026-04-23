@@ -1,16 +1,16 @@
 # 7 Segment Display
 
-The idea of this project is to set a clock for now. Note that we only set the value in this project.
+The idea of this project is to set a clock value for now. Note that in this project we only set the value.
 
 The aim is to get used to using the 7-segment display and to move into a more complex design compared to the previous two projects.
 
 Here we have to consider the following:
 
-1) Each of the 4 displays has to be active at different times and cannot be simultaneously active if they are displaying different values.
+1) Each of the 4 displays has to be active at a different time and cannot be active simultaneously if they are displaying different values
 
-2) Counters are needed to allow each display to work at the required time along with the required logic for the project.
+2) Counters are needed to allow each display to work at the required time, along with the required logic for the project
 
-3) The Basys3 7-segment display is active low. This means a segment is turned on by driving its control signal to `0`, and the same idea applies to the anode control lines.
+3) The Basys3 7-segment display is active low. This means a segment is turned on by driving its control signal to `0`, and the same idea applies to the anode control lines
 
 For this reason, the 4 displays are driven using multiplexing. In practice, only one display is enabled at a time, but the switching is done fast enough that the human eye sees all 4 digits as if they were active together.
 
