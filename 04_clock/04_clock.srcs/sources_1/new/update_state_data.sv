@@ -9,8 +9,7 @@ module update_state_data(
     input logic btnD_c,
     input logic btnL_c,
     input logic btnR_c,
-    input logic [5:0] tc_right_value,
-    input logic [4:0] tc_left_value,
+    input logic tick,
     output state_t state,
     output logic [5:0] right_value,
     output logic [4:0] left_value
@@ -65,8 +64,15 @@ module update_state_data(
                         if(btnL_c && !btnL_prev) begin
                             state <= SET_MINUTES;
                         end else begin
-                            right_value <= tc_right_value;
-                            left_value <= tc_left_value;
+                            if(tick) begin
+                                if(right_value == 6'd59) begin
+                                    right_value <= 0;
+                                    if(left_value == 5'd23) left_value <= 0;
+                                    else left_value <= left_value + 1;
+                                end else begin
+                                    right_value <= right_value + 1;
+                                end
+                            end
                         end
                     end
                 endcase

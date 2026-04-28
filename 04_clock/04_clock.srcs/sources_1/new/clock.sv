@@ -40,8 +40,7 @@ module clock(
     logic [1:0] activate = 2'b00;
     logic [5:0] right_value;
     logic [4:0] left_value;
-    logic [5:0] tc_right_value;
-    logic [4:0] tc_left_value;
+    logic tick;
 
     blink_display(.clk (clk), .rst (rst), .blink (blink));
     toggle t1(.clk (clk), .rst (rst), .activate (activate));
@@ -82,8 +81,7 @@ module clock(
         .btnD_c (btnD_c),
         .btnL_c (btnL_c),
         .btnR_c (btnR_c),
-        .tc_right_value (tc_right_value),
-        .tc_left_value (tc_left_value),
+        .tick (tick),
         .state (state),
         .right_value (right_value),
         .left_value (left_value)
@@ -92,11 +90,8 @@ module clock(
     time_counter tc(
         .clk (clk),
         .rst (rst),
-        .right_value (right_value),
-        .left_value (left_value),
         .enable_counter (state == DISPLAY),
-        .right_value_out (tc_right_value),
-        .left_value_out (tc_left_value)
+        .tick (tick)
     );
 
     display_mux dm(

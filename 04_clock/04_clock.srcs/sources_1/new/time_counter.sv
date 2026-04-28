@@ -23,38 +23,25 @@
 module time_counter(
     input logic clk,
     input logic rst,
-    input logic [5:0] right_value,
-    input logic [4:0] left_value,
     input logic enable_counter,
-    output logic [5:0] right_value_out,
-    output logic [4:0] left_value_out
+    output logic tick
     );
     logic [32:0] timing_count = 33'd6000000000; // 6 billion counts for 1 minute at 100 MHz
     always_ff @(posedge clk or posedge rst) begin
         if(rst) begin
-            timing_count <= 33'd6000000000; // reset the count for the next minute
-            right_value_out <= 0;
-            left_value_out <= 0;
-        end else if (enable_counter) begin
+            timing_count <= 33'd6000000000 - 1; // reset the count for the next minute
+            tick <= 1'b0; // clear the tick on reset
+        end else if (enable_counter) begin // Check if we are on the DISPLAY state
             if (timing_count == 0) begin
-                timing_count <= 33'd6000000000; // reset the count for the next minute
-                if(right_value == 6'd59) begin
-                    right_value_out <= 0;
-                    if(left_value == 5'd23) left_value_out <= 0;
-                    else left_value_out <= left_value + 1;
-                end else begin
-                    right_value_out <= right_value + 1;
-                    left_value_out <= left_value;
-                end
+                timing_count <= 33'd6000000000 - 1; // reset the count for the next minute
+                tick <= 1'b1; // generate a tick when the count reaches zero
             end else begin
                 timing_count <= timing_count - 1;
-                right_value_out <= right_value;
-                left_value_out <= left_value;
+                tick <= 1'b0; // clear tick while counting
             end
         end else begin
-            timing_count <= 33'd6000000000; // reset the count when not enabled
-            right_value_out <= right_value;
-            left_value_out <= left_value;
+            timing_count <= 33'd6000000000 - 1; // reset the count when not enabled
+            tick <= 1'b0; // clear the tick when not counting
         end
     end
 endmodule
