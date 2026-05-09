@@ -28,7 +28,7 @@ module timer(
     input logic btnR,
     input logic btnL,
     output logic [3:0] an,
-    output logic [6:0] c,
+    output logic [6:0] c
     );
     logic btnU_c, btnD_c, btnR_c, btnL_c;
     logic [5:0] right_value;
@@ -62,6 +62,10 @@ module timer(
             PAUSE: begin
                 show_sec = 1'b1;
                 show_min = 1'b1;
+            end
+            SET_MODE: begin
+                show_sec = blink;
+                show_min = blink;
             end
             SET_SECONDS: begin
                 show_sec = 1'b0;
