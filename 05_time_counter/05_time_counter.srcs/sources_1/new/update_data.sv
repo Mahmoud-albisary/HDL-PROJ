@@ -73,12 +73,22 @@ module update_data(
 
                     RUN: begin
                         if(tick) begin
-                            if(right_value == 6'd59) begin
-                                right_value <= 0;
-                                if(left_value == 7'd99) left_value <= 0;
-                                else left_value <= left_value + 1;
+                            if(mode == 1'b0) begin
+                                if(right_value == 0) begin
+                                    right_value <= 6'd59;
+                                    if(left_value == 0) left_value <= 7'd99;
+                                    else left_value <= left_value - 1;
+                                end else begin
+                                    right_value <= right_value - 1;
+                                end
                             end else begin
-                                right_value <= right_value + 1;
+                                if(right_value == 6'd59) begin
+                                    right_value <= 0;
+                                    if(left_value == 7'd99) left_value <= 0;
+                                    else left_value <= left_value + 1;
+                                end else begin
+                                    right_value <= right_value + 1;
+                                end
                             end
                         end
                     end
