@@ -19,6 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+import timer_states_pkg::*;
 
 module update_data(
     input logic clk,
@@ -28,8 +29,12 @@ module update_data(
     input logic btnL_c,
     input logic btnR_c,
     input logic tick,
+    input state_t state,
     output logic [5:0] right_value,
-    output logic [6:0] left_value
+    output logic [6:0] left_value,
+    output logic [5:0] set_right,
+    output logic [6:0] set_left,
+    output logic mode // 1 for stopwatch, 0 for timer
 );      
 
     logic btnU_prev;
@@ -39,17 +44,29 @@ module update_data(
     always_ff @(posedge clk or posedge rst) begin
         if(rst) begin 
             right_value <= 6'd0;
-            left_value <= 5'd0;
+            left_value <= 7'd0;
             btnU_prev <= 1'd0;
             btnD_prev <= 1'd0;
             btnR_prev <= 1'd0;
             btnL_prev <= 1'd0;
+            mode <= 1'b0;
         end else begin
                 btnU_prev <= btnU_c;
                 btnD_prev <= btnD_c;
                 btnR_prev <= btnR_c;
                 btnL_prev <= btnL_c;
                 case (state) 
+
+                    IDLE: begin
+                        right_value <= 6'd0;
+                        left_value <= 7'd0;
+                    end
+                    
+                    SET_MODE: begin
+                        if(btnU_c && !btnU_prev) begin
+                            mode <= ~mode; // toggle mode on each press
+                        end
+                    end
 
                     SET_MINUTES: begin
                         if(btnU_c && !btnU_prev) begin
@@ -69,6 +86,8 @@ module update_data(
                             if(right_value == 0) right_value <= 6'd59;
                             else right_value <= right_value - 1;
                         end
+                        set_left <= left_value;
+                        set_right <= right_value;
                     end
 
                     RUN: begin

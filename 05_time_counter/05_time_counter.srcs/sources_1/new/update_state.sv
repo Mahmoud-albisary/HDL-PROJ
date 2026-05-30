@@ -19,7 +19,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
 module update_state(
     input logic clk,
     input logic rst,
@@ -28,6 +27,11 @@ module update_state(
     input logic btnL_c,
     input logic btnR_c,
     input logic tick,
+    input logic [5:0] right_value,
+    input logic [6:0] left_value,
+    input logic [5:0] set_right,
+    input logic [6:0] set_left,
+    input logic mode, // 1 for stopwatch, 0 for timer
     output state_t state
 );      
 
