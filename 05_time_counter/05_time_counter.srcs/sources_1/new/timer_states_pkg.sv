@@ -18,6 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
+package timer_states_pkg;
 
 typedef enum logic [2:0] {
     IDLE,       // waiting / showing default screen
@@ -28,3 +29,4 @@ typedef enum logic [2:0] {
     PAUSE,      // frozen count, can resume/reset
     DONE        // countdown finished / target reached
 } state_t;
+endpackage

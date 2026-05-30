@@ -19,10 +19,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
+import seven_seg_pkg::*;
 module display_mux(
     input logic [5:0] right_value,
-    input logic [4:0] left_value,
+    input logic [6:0] left_value,
     input logic show_min,
     input logic show_hours,
     input logic [1:0] activate,

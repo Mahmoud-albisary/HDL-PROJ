@@ -18,7 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
+import seven_seg_pkg::*;
 
 module display_mux(
     input logic [5:0] right_value,
