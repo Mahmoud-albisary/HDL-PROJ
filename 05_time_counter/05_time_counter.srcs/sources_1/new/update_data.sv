@@ -32,8 +32,6 @@ module update_data(
     input state_t state,
     output logic [5:0] right_value,
     output logic [6:0] left_value,
-    output logic [5:0] set_right,
-    output logic [6:0] set_left,
     output logic mode // 1 for stopwatch, 0 for timer
 );      
 
@@ -87,8 +85,6 @@ module update_data(
                             if(right_value == 0) right_value <= 6'd59;
                             else right_value <= right_value - 1;
                         end
-                        set_left <= left_value;
-                        set_right <= right_value;
                     end
 
                     RUN: begin
