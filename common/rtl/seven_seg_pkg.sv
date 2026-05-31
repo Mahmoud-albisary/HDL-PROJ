@@ -12,6 +12,8 @@ package seven_seg_pkg;
             4'd7: num_to_display = 7'b1111000;
             4'd8: num_to_display = 7'b0000000;
             4'd9: num_to_display = 7'b0010000;
+            4'd10: num_to_display = 7'b0001000; // S
+            4'd11: num_to_display = 7'b0000011; // t
             default: num_to_display = 7'b1111111;
         endcase
     endfunction

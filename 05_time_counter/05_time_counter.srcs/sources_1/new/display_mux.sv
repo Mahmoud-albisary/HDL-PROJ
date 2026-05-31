@@ -20,12 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 import seven_seg_pkg::*;
+import timer_states_pkg::*;
+
 module display_mux(
     input logic [5:0] right_value,
     input logic [6:0] left_value,
     input logic show_min,
     input logic show_hours,
     input logic [1:0] activate,
+    input state_t state,
+    input logic mode, // 1 for stopwatch, 0 for timer
     output logic [3:0] an,
     output logic [6:0] c
     );
@@ -36,7 +40,19 @@ module display_mux(
         digits[1] = right_value / 10;
         digits[2] = left_value % 10;
         digits[3] = left_value / 10;
-        
+        if(state == SET_MODE) begin
+            if (mode == 1'b0) begin
+                digits[0] = 11; // display "t" for timer
+                digits[1] = 11; // blank
+                digits[2] = 11; // blank
+                digits[3] = 11; // blank
+            end else begin
+                digits[0] = 10; // display "S" for stopwatch
+                digits[1] = 10; // display "t" for stopwatch
+                digits[2] = 10; // blank
+                digits[3] = 10; // blank
+            end
+        end
         case (activate)
             2'b00: begin
                 c = num_to_display(digits[0]); 

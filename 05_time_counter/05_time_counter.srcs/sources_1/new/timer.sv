@@ -82,6 +82,8 @@ module timer(
         .show_min (show_sec),
         .show_hours (show_min),
         .activate (activate),
+        .state (state),
+        .mode (mode),
         .an (an),
         .c (c)
     );
