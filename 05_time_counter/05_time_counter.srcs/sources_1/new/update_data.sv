@@ -60,8 +60,9 @@ module update_data(
                     IDLE: begin
                         right_value <= 6'd0;
                         left_value <= 7'd0;
+                        mode <= 1'b0;
                     end
-                    
+
                     SET_MODE: begin
                         if(btnU_c && !btnU_prev) begin
                             mode <= ~mode; // toggle mode on each press

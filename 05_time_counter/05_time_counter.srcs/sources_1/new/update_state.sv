@@ -86,10 +86,8 @@ module update_state(
                             if(mode == 1'b0) begin
                                 if(right_value == 0 && left_value == 0) state <= DONE;
                                 else if (btnR_c && !btnR_prev) state <= PAUSE;
-                            end else if(mode == 1'b1) begin
-                                if(right_value == 0) begin
-                                    if(left_value == 0) state <= DONE;     
-                                end else if (left_value == 7'd99 && right_value == 6'd59) begin
+                            end else if(mode == 1'b1) begin     
+                                if (left_value == 7'd99 && right_value == 6'd59) begin
                                     state <= DONE;
                                 end else if (btnR_c && !btnR_prev) state <= PAUSE;
                             end
