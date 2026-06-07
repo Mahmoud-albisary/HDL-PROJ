@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 package seven_seg_pkg;
 
     function automatic logic [6:0] num_to_display(input logic [3:0] num);

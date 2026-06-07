@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 module debounce #( //The debounce module to solve the bouncing problem for mechanincal buttons
     parameter int COUNT_MAX = 1000000 //Clock frequency is 100 MHz, so 1,000,000 counts will be 10ms to check that the calue is unchanged
     )(

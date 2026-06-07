@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 // ****** Next State Logic and Data Updates ******
 // Note that we combined the next state logic and the data updates in one always_ff block for simplicity, but they can be separated if desired.
 import state_types_pkg::*;
