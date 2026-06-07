@@ -21,7 +21,10 @@
 import seven_seg_pkg::*;
 import state_types_pkg::*;
 
-module clock(
+module clock #(
+    localparam int CLK_DIV = 1000000,
+    localparam int COUNT_MAX = 1000000
+    )(
     input logic clk,
     input logic rst,
     input logic btnU,
@@ -42,15 +45,15 @@ module clock(
     logic [4:0] left_value;
     logic tick;
 
-    blink_display(.clk (clk), .rst (rst), .blink (blink));
+    blink_display blnk(.clk (clk), .rst (rst), .blink (blink));
     toggle t1(.clk (clk), .rst (rst), .activate (activate));
     state_t state = SET_MINUTES;
     assign dp = 1'b1; // decimal point off
 
-    debounce db1(.clk (clk), .btn (btnU), .clean (btnU_c));
-    debounce db2(.clk (clk), .btn (btnD), .clean (btnD_c));
-    debounce db3(.clk (clk), .btn (btnL), .clean (btnL_c));
-    debounce db4(.clk (clk), .btn (btnR), .clean (btnR_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db1(.clk (clk), .btn (btnU), .clean (btnU_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db2(.clk (clk), .btn (btnD), .clean (btnD_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db3(.clk (clk), .btn (btnL), .clean (btnL_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db4(.clk (clk), .btn (btnR), .clean (btnR_c));
 
 // ****** State Register ********
     always_comb begin
@@ -87,7 +90,9 @@ module clock(
         .left_value (left_value)
     );
 
-    time_counter tc(
+    time_counter #(
+        .ONE_MINUTE_COUNT(ONE_MINUTE_COUNT)
+    ) tc (
         .clk (clk),
         .rst (rst),
         .enable_counter (state == DISPLAY),
