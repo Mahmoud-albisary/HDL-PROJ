@@ -91,7 +91,7 @@ module clock #(
     );
 
     time_counter #(
-        .ONE_MINUTE_COUNT(ONE_MINUTE_COUNT)
+        .ONE_MINUTE_COUNT(CLK_DIV * 60) // 1 minute at the given clock frequency
     ) tc (
         .clk (clk),
         .rst (rst),
