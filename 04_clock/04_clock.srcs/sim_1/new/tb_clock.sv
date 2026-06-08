@@ -91,6 +91,12 @@ module tb_clock;
         #50;
         btn_U = 0;
 
+        // Change to display state
+        #20;
+        btn_L = 1;
+        #50;
+        btn_L = 0;
+
         // Let clock run
         #1000;
 
