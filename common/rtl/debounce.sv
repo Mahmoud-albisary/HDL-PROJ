@@ -3,16 +3,22 @@ module debounce #( //The debounce module to solve the bouncing problem for mecha
     parameter int COUNT_MAX = 1000000 //Clock frequency is 100 MHz, so 1,000,000 counts will be 10ms to check that the calue is unchanged
     )(
     input logic clk,
+    input logic rst,
     input logic btn,
     output logic clean
     );
     logic [$clog2(COUNT_MAX+1)-1: 0] count;
     always_ff @(posedge clk) begin
+        if(rst) begin
+            clean <= 1'b0;
+            count <= 0;
+        end
 
-        if(clean == btn) begin  
+        else if(clean == btn) begin  
             count <= 0;
         end 
         else if (COUNT_MAX == count) begin
+            clean <= btn;
             count <= 0;
         end
         else begin
