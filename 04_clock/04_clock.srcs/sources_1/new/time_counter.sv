@@ -21,7 +21,7 @@
 
 
 module time_counter#(
-    localparam int ONE_MINUTE_COUNT = 6000000000 // 6 billion counts for 1 minute at 100 MHz
+    parameter int ONE_MINUTE_COUNT = 6000000000 // 6 billion counts for 1 minute at 100 MHz
     )
     (
     input logic clk,
@@ -29,20 +29,21 @@ module time_counter#(
     input logic enable_counter,
     output logic tick
     );
+    logic [32:0] TIMING_COUNT; // 33 bits to count up to 6 billion
     always_ff @(posedge clk or posedge rst) begin
         if(rst) begin
-            TIMING_COUNT <= 33'ONE_MINUTE_COUNT - 1; // reset the count for the next minute
+            TIMING_COUNT <= ONE_MINUTE_COUNT - 1; // reset the count for the next minute
             tick <= 1'b0; // clear the tick on reset
         end else if (enable_counter) begin // Check if we are on the DISPLAY state
             if (TIMING_COUNT == 0) begin
-                TIMING_COUNT <= 33'ONE_MINUTE_COUNT - 1; // reset the count for the next minute
+                TIMING_COUNT <= ONE_MINUTE_COUNT - 1; // reset the count for the next minute
                 tick <= 1'b1; // generate a tick when the count reaches zero
             end else begin
                 TIMING_COUNT <= TIMING_COUNT - 1;
                 tick <= 1'b0; // clear tick while counting
             end
         end else begin
-            TIMING_COUNT <= 33'ONE_MINUTE_COUNT - 1; // reset the count when not enabled
+            TIMING_COUNT <= ONE_MINUTE_COUNT - 1; // reset the count when not enabled
             tick <= 1'b0; // clear the tick when not counting
         end
     end

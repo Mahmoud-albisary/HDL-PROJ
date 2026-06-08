@@ -22,8 +22,8 @@ import seven_seg_pkg::*;
 import state_types_pkg::*;
 
 module clock #(
-    localparam int CLK_DIV = 1000000,
-    localparam int COUNT_MAX = 1000000
+    parameter int CLK_DIV = 1000000,
+    parameter int COUNT_MAX = 1000000
     )(
     input logic clk,
     input logic rst,
