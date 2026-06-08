@@ -51,10 +51,10 @@ module clock #(
     state_t state = SET_MINUTES;
     assign dp = 1'b1; // decimal point off
 
-    debounce #(.COUNT_MAX(COUNT_MAX)) db1(.clk (clk), .btn (btnU), .clean (btnU_c));
-    debounce #(.COUNT_MAX(COUNT_MAX)) db2(.clk (clk), .btn (btnD), .clean (btnD_c));
-    debounce #(.COUNT_MAX(COUNT_MAX)) db3(.clk (clk), .btn (btnL), .clean (btnL_c));
-    debounce #(.COUNT_MAX(COUNT_MAX)) db4(.clk (clk), .btn (btnR), .clean (btnR_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db1(.clk (clk), .rst (rst), .btn (btnU), .clean (btnU_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db2(.clk (clk), .rst (rst), .btn (btnD), .clean (btnD_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db3(.clk (clk), .rst (rst), .btn (btnL), .clean (btnL_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db4(.clk (clk), .rst (rst), .btn (btnR), .clean (btnR_c));
 
 // ****** State Register ********
     always_comb begin
