@@ -36,7 +36,9 @@ module toggle(
     assign activate = refresh_count[15:14];
 endmodule
 
-module blink_display(
+module blink_display # (
+    parameter int REFRESH_COUNT = 50000000 // 50 ms blink at 100 MHz
+)(
     input logic clk, // clock
     input logic rst, // reset
     output logic blink
@@ -47,7 +49,7 @@ module blink_display(
             count <= 26'd0;
             blink <= 1'b1 ;
         end else begin
-            if(count == 26'd50000000) begin
+            if(count == REFRESH_COUNT) begin
                 count <= 26'd0;
                 blink <= ~blink;
             end else begin

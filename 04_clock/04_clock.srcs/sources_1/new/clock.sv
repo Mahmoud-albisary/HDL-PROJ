@@ -23,7 +23,8 @@ import state_types_pkg::*;
 
 module clock #(
     parameter int CLK_DIV = 1000000,
-    parameter int COUNT_MAX = 1000000
+    parameter int COUNT_MAX = 1000000, // 10 ms debounce at 100 MHz
+    parameter int DISPLAY_REFRESH_COUNT = 50000000 // 50 ms refresh at 100 MHz
     )(
     input logic clk,
     input logic rst,
@@ -45,7 +46,7 @@ module clock #(
     logic [4:0] left_value;
     logic tick;
 
-    blink_display blnk(.clk (clk), .rst (rst), .blink (blink));
+    blink_display #(.REFRESH_COUNT(DISPLAY_REFRESH_COUNT)) blnk(.clk (clk), .rst (rst), .blink (blink));
     toggle t1(.clk (clk), .rst (rst), .activate (activate));
     state_t state = SET_MINUTES;
     assign dp = 1'b1; // decimal point off
