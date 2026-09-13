@@ -45,7 +45,9 @@ module tb_clock;
     clock #(
         .CLK_DIV(CLK_DIV_SIM),
         .COUNT_MAX(DEBOUNCE_SIM),
-        .DISPLAY_REFRESH_COUNT(REFRESH_SIM)
+        .DISPLAY_REFRESH_COUNT(REFRESH_SIM),
+        .REFRESH_BITS_HIGH(REFRESH_BITS_HIGH),
+        .REFRESH_BITS_LOW(REFRESH_BITS_LOW)
     ) dut (
         .clk  (clk),
         .rst  (rst),
