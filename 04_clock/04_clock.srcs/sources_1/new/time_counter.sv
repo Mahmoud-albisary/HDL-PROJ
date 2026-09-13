@@ -21,7 +21,8 @@
 
 
 module time_counter#(
-    parameter int ONE_MINUTE_COUNT = 6000000000 // 6 billion counts for 1 minute at 100 MHz
+    // The 64-bit literal prevents Vivado from first treating this as a 32-bit int.
+    parameter longint unsigned ONE_MINUTE_COUNT = 64'd6_000_000_000 // 6 billion counts for 1 minute at 100 MHz
     )
     (
     input logic clk,
