@@ -22,7 +22,8 @@ import seven_seg_pkg::*;
 import state_types_pkg::*;
 
 module clock #(
-    parameter int CLK_DIV = 1000000,
+    // 64-bit: 100 MHz * 60 seconds = 6,000,000,000 cycles.
+    parameter longint unsigned CLK_DIV = 100_000_000,
     parameter int COUNT_MAX = 1000000, // 10 ms debounce at 100 MHz
     parameter int DISPLAY_REFRESH_COUNT = 50000000, // 50 ms refresh at 100 MHz
     parameter int REFRESH_BITS_HIGH = 15,
