@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 
 module tb_timer;
+    import timer_states_pkg::*;
 
     logic clk;
     logic rst;
@@ -12,11 +13,19 @@ module tb_timer;
     logic [3:0] an;
     logic [6:0] c;
 
-    // The current timer uses hardware timing: 10 ms debounce and 1 s ticks.
-    // Hold AND release each button for longer than the debounce interval.
-    localparam time BUTTON_TIME = 20ms;
+    // One simulated second takes 1 us; button presses complete between ticks.
+    localparam int CLK_DIV_SIM = 100;
+    localparam int DEBOUNCE_SIM = 3;
+    localparam time SECOND_TIME = CLK_DIV_SIM * 10ns;
+    localparam time BUTTON_TIME = (DEBOUNCE_SIM + 3) * 10ns;
 
-    timer dut (
+    timer #(
+        .CLK_DIV(CLK_DIV_SIM),
+        .COUNT_MAX(DEBOUNCE_SIM),
+        .DISPLAY_REFRESH_COUNT(5),
+        .REFRESH_BITS_HIGH(3),
+        .REFRESH_BITS_LOW(2)
+    ) dut (
         .clk  (clk),
         .rst  (rst),
         .btnU (btn_U),
@@ -38,6 +47,21 @@ module tb_timer;
         {btn_U, btn_D, btn_R, btn_L} = 4'b0000;
         #(BUTTON_TIME);
     endtask
+
+    task automatic check_timer(input state_t expected_state,
+                               input int expected_seconds);
+        if (dut.state !== expected_state ||
+            dut.left_value !== 0 || dut.right_value !== expected_seconds)
+            $fatal(1, "Expected state=%0d time=00:%0d; got state=%0d time=%0d:%0d",
+                   expected_state, expected_seconds, dut.state,
+                   dut.left_value, dut.right_value);
+    endtask
+
+    // Stop failed simulations instead of running indefinitely.
+    initial begin
+        #100us;
+        $fatal(1, "Testbench timeout");
+    end
 
     initial begin
         clk   = 0;
@@ -63,11 +87,14 @@ module tb_timer;
         press_button(4'b1000); // Set seconds to 3
         press_button(4'b0010); // SET_SECONDS -> RUN
 
-        #1100ms;
+        #(SECOND_TIME + SECOND_TIME / 10);
         press_button(4'b0010); // RUN -> PAUSE
-        #1100ms;              // Values should remain unchanged
+        check_timer(PAUSE, 2);
+        #(SECOND_TIME + SECOND_TIME / 10);
+        check_timer(PAUSE, 2);
         press_button(4'b0010); // PAUSE -> RUN
-        #2200ms;              // Countdown reaches 00:00 / DONE
+        #(2 * SECOND_TIME + SECOND_TIME / 5);
+        check_timer(DONE, 0);
         press_button(4'b0001); // DONE -> IDLE
 
         // Stopwatch: select mode and start from 00:00.
@@ -77,15 +104,20 @@ module tb_timer;
         press_button(4'b0010); // SET_MINUTES -> SET_SECONDS
         press_button(4'b0010); // SET_SECONDS -> RUN
 
-        #2200ms;
+        #(2 * SECOND_TIME + SECOND_TIME / 5);
         press_button(4'b0010); // RUN -> PAUSE
-        #1100ms;              // Values should remain unchanged
+        check_timer(PAUSE, 2);
+        #(SECOND_TIME + SECOND_TIME / 10);
+        check_timer(PAUSE, 2);
         press_button(4'b0010); // PAUSE -> RUN
-        #1100ms;
+        #(SECOND_TIME + SECOND_TIME / 10);
         press_button(4'b0010); // RUN -> PAUSE
+        check_timer(PAUSE, 3);
         press_button(4'b0001); // PAUSE -> IDLE, clearing the values
 
         #(BUTTON_TIME);
+        check_timer(IDLE, 0);
+        $display("PASS: countdown, stopwatch, pause/resume, and return to idle");
         $finish;
     end
 

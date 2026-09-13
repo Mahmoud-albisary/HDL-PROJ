@@ -21,7 +21,13 @@
 
 import timer_states_pkg::*;
 
-module timer(
+module timer #(
+    parameter int unsigned CLK_DIV = 100_000_000,
+    parameter int COUNT_MAX = 1_000_000,
+    parameter int unsigned DISPLAY_REFRESH_COUNT = 50_000_000,
+    parameter int REFRESH_BITS_HIGH = 15,
+    parameter int REFRESH_BITS_LOW = 14
+)(
     input logic clk,
     input logic rst,
     input logic btnU,
@@ -34,15 +40,20 @@ module timer(
     logic btnU_c, btnD_c, btnR_c, btnL_c;
     logic [5:0] right_value;
     logic [6:0] left_value;
-    logic [1:0] activate = 2'b00;
+    logic [1:0] activate;
     logic show_sec = 1'b1;
     logic show_min = 1'b1;
     logic blink = 1'b1;
     logic tick;
     logic mode;
 
-    blink_display(.clk (clk), .rst (rst), .blink (blink));
-    toggle t1(.clk (clk), .rst (rst), .activate (activate));
+    blink_display #(.REFRESH_COUNT(DISPLAY_REFRESH_COUNT)) blnk(
+        .clk (clk), .rst (rst), .blink (blink)
+    );
+    toggle #(
+        .REFRESH_BITS_HIGH(REFRESH_BITS_HIGH),
+        .REFRESH_BITS_LOW(REFRESH_BITS_LOW)
+    ) t1(.clk (clk), .rst (rst), .activate (activate));
     state_t state = IDLE;
     update_data ud(
         .clk (clk),
@@ -70,7 +81,7 @@ module timer(
         .mode (mode),
         .state (state)
     );
-    timer_counter tc(
+    timer_counter #(.CLK_DIV(CLK_DIV)) tc(
         .clk (clk),
         .rst (rst),
         .enable_counter (state == RUN),
@@ -87,10 +98,10 @@ module timer(
         .an (an),
         .c (c)
     );
-    debounce db1(.clk (clk), .btn (btnU), .clean (btnU_c));
-    debounce db2(.clk (clk), .btn (btnD), .clean (btnD_c));
-    debounce db3(.clk (clk), .btn (btnL), .clean (btnL_c));
-    debounce db4(.clk (clk), .btn (btnR), .clean (btnR_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db1(.clk (clk), .rst (rst), .btn (btnU), .clean (btnU_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db2(.clk (clk), .rst (rst), .btn (btnD), .clean (btnD_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db3(.clk (clk), .rst (rst), .btn (btnL), .clean (btnL_c));
+    debounce #(.COUNT_MAX(COUNT_MAX)) db4(.clk (clk), .rst (rst), .btn (btnR), .clean (btnR_c));
 
     always_comb begin
         show_sec = 1'b1;
