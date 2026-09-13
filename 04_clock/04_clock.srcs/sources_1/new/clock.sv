@@ -50,7 +50,10 @@ module clock #(
     logic tick;
 
     blink_display #(.REFRESH_COUNT(DISPLAY_REFRESH_COUNT)) blnk(.clk (clk), .rst (rst), .blink (blink));
-    toggle t1(.clk (clk), .rst (rst), .activate (activate));
+    toggle #(
+        .REFRESH_BITS_HIGH(REFRESH_BITS_HIGH),
+        .REFRESH_BITS_LOW(REFRESH_BITS_LOW)
+    ) t1(.clk (clk), .rst (rst), .activate (activate));
     state_t state = SET_MINUTES;
     assign dp = 1'b1; // decimal point off
 
