@@ -24,7 +24,9 @@ import state_types_pkg::*;
 module clock #(
     parameter int CLK_DIV = 1000000,
     parameter int COUNT_MAX = 1000000, // 10 ms debounce at 100 MHz
-    parameter int DISPLAY_REFRESH_COUNT = 50000000 // 50 ms refresh at 100 MHz
+    parameter int DISPLAY_REFRESH_COUNT = 50000000, // 50 ms refresh at 100 MHz
+    parameter int REFRESH_BITS_HIGH = 15,
+    parameter int REFRESH_BITS_LOW = 14
     )(
     input logic clk,
     input logic rst,

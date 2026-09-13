@@ -20,7 +20,10 @@ package seven_seg_pkg;
     endfunction
 endpackage
 
-module toggle(
+module toggle #(
+    parameter int REFRESH_BITS_HIGH = 15,
+    parameter int REFRESH_BITS_LOW  = 14
+)(
     input logic clk,
     input logic rst,
     output logic [1:0] activate
@@ -33,7 +36,7 @@ module toggle(
             refresh_count <= refresh_count + 1;
         end
     end
-    assign activate = refresh_count[15:14];
+    assign activate = refresh_count[REFRESH_BITS_HIGH:REFRESH_BITS_LOW];
 endmodule
 
 module blink_display # (

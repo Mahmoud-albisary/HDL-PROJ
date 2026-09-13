@@ -39,6 +39,8 @@ module tb_clock;
     localparam CLK_DIV_SIM = 10;
     localparam DEBOUNCE_SIM = 3;
     localparam REFRESH_SIM = 5;
+    localparam REFRESH_BITS_HIGH = 15;
+    localparam REFRESH_BITS_LOW = 14;
 
     clock #(
         .CLK_DIV(CLK_DIV_SIM),
