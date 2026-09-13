@@ -102,7 +102,7 @@ module tb_clock;
         btn_L = 0;
 
         // Let clock run
-        #1000;
+        #100us;
 
         $finish;
     end
